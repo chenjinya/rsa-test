@@ -1,0 +1,110 @@
+
+<html>
+<head>
+<title>RSA DEMO</title>
+<script language="JavaScript" type="text/javascript" src="jsrsasign-latest-all-min.js"></script>
+<script language="JavaScript" type="text/javascript">
+
+function doSign() {
+  var rsa = new RSAKey();
+  rsa.readPrivateKeyFromPEMString(document.form1.prvkey1.value);
+  var hashAlg = document.form1.hashalg.value;
+  var hSig = rsa.signString(document.form1.msgsigned.value, hashAlg);
+  document.form1.siggenerated.value = hex2b64(hSig);
+}
+
+function hex2b64(h) {
+  var i;
+  var c;
+  var ret = "";
+  for(i = 0; i+3 <= h.length; i+=3) {
+    c = parseInt(h.substring(i,i+3),16);
+    ret += b64map.charAt(c >> 6) + b64map.charAt(c & 63);
+  }
+  if(i+1 == h.length) {
+    c = parseInt(h.substring(i,i+1),16);
+    ret += b64map.charAt(c << 2);
+  }
+  else if(i+2 == h.length) {
+    c = parseInt(h.substring(i,i+2),16);
+    ret += b64map.charAt(c >> 2) + b64map.charAt((c & 3) << 4);
+  }
+  while((ret.length & 3) > 0) ret += b64pad;
+  return ret;
+}
+
+//function doEncrypt() {
+  //var hashAlg = document.form1.hashalg.value;
+  //var hSig = rsa.signString(document.form1.msgsigned.value, hashAlg);
+  //document.form1.siggenerated.value = hex2b64(hSig);
+//}
+
+</script>
+<style type="text/css">
+TD  {vertical-align: top}
+</style>
+</head>
+<body>
+<h1>Sample Application for RSA signing in JavaScript</h1>
+
+<form name="form1">
+<table border="0">
+<tr><th>Signer</th><th></th><th>Verifier</th></tr>
+
+<tr>
+<td>
+PEM RSA Private Key<br/>
+<textarea name="prvkey1" rows="10" cols="65">
+-----BEGIN RSA PRIVATE KEY-----
+MIICXAIBAAKBgQC1wuq1MvrVUv4M8fMZvwyQ6e1fFmKpWkeHidZeESwjfXw/Q5nJ
+brYxZWDr0j4IF11/q7tKKnjVFefceRG+IpLDKvb/vPWA9okA2i8YdNQdGMR/Nz9a
+CzggBUy70KgGL2hEOQDvmLqzd03GqryrB36f3y5hXpXsO/V90LGJfFj2VwIDAQAB
+AoGAH0oowXy/NY4N8giMwvfin+fFV0MxRNonyituXc8y/AEULIfkp4qJjsNXBgGx
+cA8lp17W5ROerYAR5CBrb4HgJbJkEZaf71kOfaeh1oBuw8U23RXFJPEYiu4DQyl7
+vrKPENfPGwEjg+9f7U9hvWsDLxgw8lXZ02hVUXpo4mcxFUECQQDr/9nlbnh4BtoC
+gJietAHqVPw3bc3+4ssXCJiAcn4NEf6Rt7VH/LG9vKRO4fPM5JD0YmlXwZs0NpXU
+i82sWfnHAkEAxSpW1riuhkW7a6N37w6J6fwwb1zDUWqdh4RTrHM/SgGaUQQXrvGJ
+TmCyMKwXGqOhpsSmgKGNBY0JHrhj0KSe8QJATpL0vUq2mV/Onh6qscxFBvwcrWfF
+uiNQcu7Nt5ZnGXrwQxvjI4CivQVdv1XDkmhXSsapRCqVviCeahHR/JxIaQJBAKfC
+vb7Xx0/id3U/0yWqNjjMZx3qTRqyX7VWJ6f9K6W5tWcn10r4o374EcYON15oSnxO
+qOmcDBTkCxWDiRKXb9ECQEdZVzHFW3NZ7zlm6GSpHkqVIc56nHWjBs3Tj358sZ8k
+2PvIPGCUTKNeQ7kxiPOfc21NwnG1v7g2/b/itEOiSHI=
+-----END RSA PRIVATE KEY-----
+</textarea><br/>
+Text message to be signed.<br/>
+<input type="text" name="msgsigned" size="100" value="aaa"/><br/>
+</td>
+<td></td>
+<td>
+</td>
+</tr>
+
+<tr>
+<td>
+<select name="hashalg">
+<option value="sha1" selected>SHA1
+<option value="sha256">SHA256
+<option value="sha512">SHA512
+<option value="md5">MD5
+<option value="ripemd160">RIPEMD-160
+</select>
+<input type="button" value="Sign to this message &darr;" onClick="doSign();"/><br/>
+</td>
+<td>
+<input type="button" value="encrypt" onClick="doEncrypt();"/><br/>
+</td>
+<td>
+<input type="button" value="Verify this signature &uarr;" onClick="doVerify();"/><br/>
+</td>
+</tr>
+<tr>
+<td>
+Generated Signature<br/>
+<textarea name="siggenerated" rows="4" cols="65"></textarea>
+</td>
+<td></td><td></td><td></td>
+</table>
+</form>
+
+</body>
+</html>
